@@ -38,9 +38,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'api.apps.ApiConfig',
+    'accounts.apps.AccountsConfig',
     
     'rest_framework',
     'corsheaders',
+    'rest_framework_simplejwt',
 ]
 
 MIDDLEWARE = [
@@ -128,8 +130,11 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-# REST_FRAMEWORK={
-#     'DEFAULT_RENDERER_CLASSES':(
-#         'rest_framework.renderers.JSONRenderer',    
-#     )
-# }
+REST_FRAMEWORK={
+    # 'DEFAULT_RENDERER_CLASSES':(
+    #     'rest_framework.renderers.JSONRenderer',    
+    # ),
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}

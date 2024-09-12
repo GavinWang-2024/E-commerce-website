@@ -12,7 +12,7 @@ from .serializers import ProductSerializer
 def api_root(request):
     routes={
         'products':request.build_absolute_uri('products/'),
-        'product_detail':request.build_absolute_uri('products/{id}/'),
+        'product_detail':request.build_absolute_uri('products/1/'),
     }
     return Response(routes)
 
@@ -44,3 +44,4 @@ def product_detail(request,pk):
     elif request.method=="DELETE":
         product.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
