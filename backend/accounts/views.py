@@ -1,15 +1,3 @@
-
-# @api_view(['GET'])
-# def api_root(request):
-#     routes={
-#         'register':request.build_absolute_uri('register/'),
-#         'login':request.build_absolute_uri('login/'),
-#         'user_list':request.build_absolute_uri('user_list/'),
-#         'update_user':request.build_absolute_uri('update_user/{pk}/'),
-#     }
-#     return Response(routes)
-
-
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.urls import reverse
@@ -25,9 +13,9 @@ from .serializers import UserSerializer,LoginSerializer
 @api_view(['GET'])
 def api_root(request):
     return Response({
-        'users':reverse('user-list',request=request),
-        'register':reverse('user-register',request=request),
-        'login':reverse('login',request=request),
+        'users':reverse('user-list'),
+        'register':reverse('user-register'),
+        'login':reverse('login'),
     })
 
 class UserViewSet(viewsets.ModelViewSet):
