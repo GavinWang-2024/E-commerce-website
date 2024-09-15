@@ -6,3 +6,4 @@ djangorestframework-simplejwt
 
 #react-router-dom
 #npm install --save-dev @types/react
+#npm install jwt-decode

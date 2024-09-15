@@ -7,6 +7,7 @@ from rest_framework.decorators import action,api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import UserSerializer,LoginSerializer
 
@@ -16,6 +17,7 @@ def api_root(request):
         'users':reverse('user-list'),
         'register':reverse('user-register'),
         'login':reverse('login'),
+        'logout':reverse('logout'),
     })
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -30,8 +32,11 @@ class UserViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 class LoginView(APIView):
+    """
+    Handles user login by generating and returning JWT tokens.
+    """
     def post(self, request):
-        print("Received login request:", request.data)  # Log the received data
+        print("Received login request:", request.data)  
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
             username = serializer.validated_data['username']
@@ -42,9 +47,22 @@ class LoginView(APIView):
                 return Response({
                     'refresh': str(refresh),
                     'access': str(refresh.access_token)
-                })
+                }, status=status.HTTP_200_OK)
             else:
-                print(f"Authentication failed for username: {username}")  # Log authentication failure
-                return Response({"error": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED)
-        print("Serializer errors:", serializer.errors)  # Log serializer errors
+                return Response({"error": "Invalid username or password"}, status=status.HTTP_401_UNAUTHORIZED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data.get('refresh')
+            if not refresh_token:
+                return Response({"error": "Refresh token is required"}, status=status.HTTP_400_BAD_REQUEST)  
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            
+            return Response({"message": "Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
